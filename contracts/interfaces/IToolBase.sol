@@ -1,0 +1,26 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.19;
+
+interface IToolBase {
+    // // // // // // // // // // // // // // // // // // // //
+    // EVENTS
+    // // // // // // // // // // // // // // // // // // // //
+
+    // // // // // // // // // // // // // // // // // // // //
+    // UTIL FUNCTIONS
+    // // // // // // // // // // // // // // // // // // // //
+
+    /**
+     * @notice Pause this contract
+     * @param val Pause state to set
+     */
+    function pause(bool val) external;
+
+    // // // // // // // // // // // // // // // // // // // //
+    // VIEW FUNCTIONS
+    // // // // // // // // // // // // // // // // // // // //
+
+    // // // // // // // // // // // // // // // // // // // //
+    // CORE FUNCTIONS
+    // // // // // // // // // // // // // // // // // // // //
+}
