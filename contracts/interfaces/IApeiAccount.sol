@@ -1,26 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-interface IToolFactory {
+interface IApeiAccount {
     // // // // // // // // // // // // // // // // // // // //
     // EVENTS
     // // // // // // // // // // // // // // // // // // // //
-
     // // // // // // // // // // // // // // // // // // // //
     // UTIL FUNCTIONS
     // // // // // // // // // // // // // // // // // // // //
-
-    /**
-     * @notice Pause this contract
-     * @param val Pause state to set
-     */
-    function pause(bool val) external;
-
     // // // // // // // // // // // // // // // // // // // //
     // VIEW FUNCTIONS
     // // // // // // // // // // // // // // // // // // // //
-
     // // // // // // // // // // // // // // // // // // // //
     // CORE FUNCTIONS
     // // // // // // // // // // // // // // // // // // // //
+    function register(
+        string memory _apeiSubdomain,
+        bytes32 _apeiSubdomainNodeHash
+    ) external;
 }
