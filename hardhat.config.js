@@ -37,11 +37,11 @@ const config = {
       blockGasLimit: 12e6,
       allowUnlimitedContractSize: true,
     },
-    baseGoerli: {
-      url: process.env.BASE_GOERLI_URL || "",
+    goerli: {
+      url: process.env.GOERLI_URL || "",
       accounts:
-        process.env.PRIVATE_KEY_BASE_GOERLI !== undefined
-          ? [process.env.PRIVATE_KEY_BASE_GOERLI]
+        process.env.PRIVATE_KEY_GOERLI !== undefined
+          ? [process.env.PRIVATE_KEY_GOERLI]
           : [],
     },
     localhost: {
