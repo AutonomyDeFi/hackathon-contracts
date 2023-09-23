@@ -17,13 +17,6 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
     // LIBRARIES AND STRUCTS
     // // // // // // // // // // // // // // // // // // // //
 
-    struct PaymentReceiptDetailsMapObject {
-        uint256 paymentReceiptId;
-        address payerAddress;
-        bool isUsed;
-        bool isValid;
-    }
-
     struct ApeiDetailsMapObject {
         uint256 apeiId;
         uint256 apeiCost;
@@ -61,11 +54,7 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
     // List of all the apeis
     uint256[] private _apeiIds;
 
-    // id of payment receipt -> struct of payment receipt info
-    mapping(uint256 => PaymentReceiptDetailsMapObject)
-        internal _paymentReceiptDetails;
-
-    // id of apei -> struct of payment receipt info
+    // id of apei -> struct of ApeI  info
     mapping(uint256 => ApeiDetailsMapObject) internal _apeiDetails;
 
     // // // // // // // // // // // // // // // // // // // //
@@ -119,14 +108,15 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
         string memory apeiSubdomain,
         bytes32 apeiSubdomainNodeHash,
         bytes32 _salt
-    ) public returns (address) {
+    ) external override returns (address) {
         // Make up some simple random id
         uint256 apeiId = uint256(keccak256(abi.encodePacked(_apeiIds.length)));
 
         // Create the apei account
         ApeiAccount apeiAccount = new ApeiAccount{salt: _salt}(
             apeiId,
-            _msgSender()
+            _msgSender(),
+            address(this)
         );
 
         // Set up the struct
@@ -168,8 +158,8 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
             address(this)
         );
 
-        // Tells the child node to save more data
-        IApeiAccount(address(apeiAccount)).register(
+        // Tells the child apei account to save the domain details
+        apeiAccount.register(
             // string memory _apeiSubdomain,
             apeiSubdomain,
             // bytes32 _apeiSubdomainNodeHash
@@ -177,5 +167,77 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
         );
 
         return address(apeiAccount);
+    }
+
+    // // // // // // // // // // // // // // // // // // // //
+    // VIEW FUNCTIONS
+    // // // // // // // // // // // // // // // // // // // //
+
+    /**
+     * @notice Sends back the list of apeis
+     * @return apeiIds list of ids
+     */
+    function getAllApeis() external view override returns (uint256[] memory) {
+        return _apeiIds;
+    }
+
+    /**
+     * @notice Sends back api of the ApeI
+     * @return apeiApi the api of the ApeI
+     */
+    function getAllApeiApi(
+        uint256 apeiId
+    ) external view override returns (string memory) {
+        return _apeiDetails[apeiId].apeiApi;
+    }
+
+    /**
+     * @notice Sends back cost of the ApeI
+     * @return apeiCost the cost of the ApeI
+     */
+    function getAllApeiCost(
+        uint256 apeiId
+    ) external view override returns (uint256) {
+        return _apeiDetails[apeiId].apeiCost;
+    }
+
+    /**
+     * @notice Sends back description of the ApeI
+     * @return apeiDescription the description of the ApeI
+     */
+    function getAllApeiDescription(
+        uint256 apeiId
+    ) external view override returns (string memory) {
+        return _apeiDetails[apeiId].apeiDescription;
+    }
+
+    /**
+     * @notice Sends back name of the ApeI
+     * @return apeiName the name of the ApeI
+     */
+    function getAllApeiName(
+        uint256 apeiId
+    ) external view override returns (string memory) {
+        return _apeiDetails[apeiId].apeiName;
+    }
+
+    /**
+     * @notice Sends back subdomain of the ApeI
+     * @return apeiSubdomain the subdomain of the ApeI
+     */
+    function getAllApeiSubdomain(
+        uint256 apeiId
+    ) external view override returns (string memory) {
+        return _apeiDetails[apeiId].apeiSubdomain;
+    }
+
+    /**
+     * @notice Sends back account address of the ApeI
+     * @return apeiAccountAddress the account address of the ApeI
+     */
+    function getAllApeiAccountAddress(
+        uint256 apeiId
+    ) external view override returns (address) {
+        return _apeiDetails[apeiId].accountAddress;
     }
 }

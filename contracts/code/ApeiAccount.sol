@@ -12,6 +12,13 @@ contract ApeiAccount is IApeiAccount, Context {
     // LIBRARIES AND STRUCTS
     // // // // // // // // // // // // // // // // // // // //
 
+    struct PaymentReceiptDetailsMapObject {
+        uint256 paymentReceiptId;
+        address payerAddress;
+        bool isUsed;
+        bool isValid;
+    }
+
     // // // // // // // // // // // // // // // // // // // //
     // VARIABLES
     // // // // // // // // // // // // // // // // // // // //
@@ -21,18 +28,24 @@ contract ApeiAccount is IApeiAccount, Context {
         0x4f7A657451358a22dc397d5eE7981FfC526cd856;
 
     // Address of the person that created the apei
+    address public apeiFactory;
     address public apeiCreator;
     uint256 public apeiId;
     string public apeiSubdomain;
     bytes32 public apeiSubdomainNodeHash;
 
+    // id of payment receipt -> struct of payment receipt info
+    mapping(uint256 => PaymentReceiptDetailsMapObject)
+        internal _paymentReceiptDetails;
+
     // // // // // // // // // // // // // // // // // // // //
     // CONSTRUCTOR
     // // // // // // // // // // // // // // // // // // // //
 
-    constructor(uint256 _apeiId, address _apeiCreator) {
+    constructor(uint256 _apeiId, address _apeiCreator, address _apeiFactory) {
         apeiCreator = _apeiCreator;
         apeiId = _apeiId;
+        apeiFactory = _apeiFactory;
     }
 
     // // // // // // // // // // // // // // // // // // // //
@@ -45,6 +58,12 @@ contract ApeiAccount is IApeiAccount, Context {
         _;
     }
 
+    modifier onlyFactory() {
+        require(apeiFactory == _msgSender(), "Must be the apei factory");
+
+        _;
+    }
+
     // // // // // // // // // // // // // // // // // // // //
     // CORE FUNCTIONALITY
     // // // // // // // // // // // // // // // // // // // //
@@ -52,7 +71,7 @@ contract ApeiAccount is IApeiAccount, Context {
     function register(
         string memory _apeiSubdomain,
         bytes32 _apeiSubdomainNodeHash
-    ) external {
+    ) external override onlyFactory {
         apeiSubdomain = _apeiSubdomain;
         apeiSubdomainNodeHash = _apeiSubdomainNodeHash;
 
