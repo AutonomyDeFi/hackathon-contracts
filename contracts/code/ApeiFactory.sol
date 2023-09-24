@@ -27,12 +27,17 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
         string apeiName;
         string apeiDescription;
         string apeiSubdomain;
+        string apeiTag;
         bytes32 apeiSubdomainNodeHash;
     }
 
     // // // // // // // // // // // // // // // // // // // //
     // VARIABLES
     // // // // // // // // // // // // // // // // // // // //
+    // Ape Token Contract
+    address public constant APE_TOKEN =
+        0x328507DC29C95c170B56a1b3A758eB7a9E73455c;
+
     // ENS NameWrapper Contract
     bytes32 public constant APEI_ENS_NODE_HASH =
         0x5bf464e0f45eab3cb7a31d7a4e241d8036864e667ebdaf433d49fb9275efaf2e;
@@ -47,9 +52,6 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
 
     // List of all the payments receipts
     address private _apeiDomainOwner;
-
-    // List of all the payments receipts
-    uint256[] private _paymentReceiptIds;
 
     // List of all the apeis
     uint256[] private _apeiIds;
@@ -96,6 +98,7 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
      * @param apeiName the name of the apei
      * @param apeiDescription the description of the apei
      * @param apeiSubdomain the ENS subdomain of the apei
+     * @param apeiTag the tag of the apei
      * @param apeiSubdomainNodeHash the ENS node hash subdomain of the apei
      * @param _salt The salt to create the contract with
      * @return createdApei address of the newly deployed contract
@@ -106,6 +109,7 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
         string memory apeiName,
         string memory apeiDescription,
         string memory apeiSubdomain,
+        string memory apeiTag,
         bytes32 apeiSubdomainNodeHash,
         bytes32 _salt
     ) external override returns (address) {
@@ -116,13 +120,14 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
         ApeiAccount apeiAccount = new ApeiAccount{salt: _salt}(
             apeiId,
             _msgSender(),
-            address(this)
+            address(this),
+            apeiTag
         );
 
         // Set up the struct
         ApeiDetailsMapObject storage apeiDetailsMapObj = _apeiDetails[apeiId];
 
-        // Set up the struct of the streamer details
+        // Set up the struct of the streamer agent details
         apeiDetailsMapObj.apeiId = apeiId;
         apeiDetailsMapObj.apeiCost = apeiCost;
         apeiDetailsMapObj.accountAddress = address(apeiAccount);
@@ -132,6 +137,7 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
         apeiDetailsMapObj.apeiName = apeiName;
         apeiDetailsMapObj.apeiDescription = apeiDescription;
         apeiDetailsMapObj.apeiSubdomain = apeiSubdomain;
+        apeiDetailsMapObj.apeiTag = apeiTag;
         apeiDetailsMapObj.apeiSubdomainNodeHash = apeiSubdomainNodeHash;
 
         // Creates the Subdomain on the NameWrapper Contract
@@ -185,7 +191,7 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
      * @notice Sends back api of the ApeI
      * @return apeiApi the api of the ApeI
      */
-    function getAllApeiApi(
+    function getApeiApi(
         uint256 apeiId
     ) external view override returns (string memory) {
         return _apeiDetails[apeiId].apeiApi;
@@ -195,7 +201,7 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
      * @notice Sends back cost of the ApeI
      * @return apeiCost the cost of the ApeI
      */
-    function getAllApeiCost(
+    function getApeiCost(
         uint256 apeiId
     ) external view override returns (uint256) {
         return _apeiDetails[apeiId].apeiCost;
@@ -205,7 +211,7 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
      * @notice Sends back description of the ApeI
      * @return apeiDescription the description of the ApeI
      */
-    function getAllApeiDescription(
+    function getApeiDescription(
         uint256 apeiId
     ) external view override returns (string memory) {
         return _apeiDetails[apeiId].apeiDescription;
@@ -215,7 +221,7 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
      * @notice Sends back name of the ApeI
      * @return apeiName the name of the ApeI
      */
-    function getAllApeiName(
+    function getApeiName(
         uint256 apeiId
     ) external view override returns (string memory) {
         return _apeiDetails[apeiId].apeiName;
@@ -225,17 +231,27 @@ contract ApeiFactory is Context, Ownable, Pausable, IApeiFactory {
      * @notice Sends back subdomain of the ApeI
      * @return apeiSubdomain the subdomain of the ApeI
      */
-    function getAllApeiSubdomain(
+    function getApeiSubdomain(
         uint256 apeiId
     ) external view override returns (string memory) {
         return _apeiDetails[apeiId].apeiSubdomain;
     }
 
     /**
+     * @notice Sends back tag of the ApeI
+     * @return apeiTag the tag of the ApeI
+     */
+    function getApeiTag(
+        uint256 apeiId
+    ) external view override returns (string memory) {
+        return _apeiDetails[apeiId].apeiTag;
+    }
+
+    /**
      * @notice Sends back account address of the ApeI
      * @return apeiAccountAddress the account address of the ApeI
      */
-    function getAllApeiAccountAddress(
+    function getApeiAccountAddress(
         uint256 apeiId
     ) external view override returns (address) {
         return _apeiDetails[apeiId].accountAddress;

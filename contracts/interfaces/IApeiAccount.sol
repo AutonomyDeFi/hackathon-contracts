@@ -18,4 +18,6 @@ interface IApeiAccount {
         string memory _apeiSubdomain,
         bytes32 _apeiSubdomainNodeHash
     ) external;
+
+    function startPayment() external;
 }
